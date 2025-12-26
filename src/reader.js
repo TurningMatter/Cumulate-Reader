@@ -2,6 +2,7 @@ const { CONFIG } = require('./config');
 const { cache } = require('./cache');
 const { fetchDirect, fetchWithBrowser } = require('./fetcher');
 const { parseAndExtract } = require('./parser');
+const { validateUrl } = require('./security');
 
 async function urlToMarkdown(url, options = {}) {
   const {
@@ -18,15 +19,7 @@ async function urlToMarkdown(url, options = {}) {
 
   const startTime = Date.now();
 
-  let parsedUrl;
-  try {
-    parsedUrl = new URL(url);
-    if (!['http:', 'https:'].includes(parsedUrl.protocol)) {
-      throw new Error('Invalid protocol');
-    }
-  } catch {
-    throw new Error('Invalid URL');
-  }
+  const parsedUrl = await validateUrl(url);
 
   const cacheKey = `${engine}:${url}:${targetSelector || ''}:${removeSelectors.join(',')}`;
   if (!noCache) {

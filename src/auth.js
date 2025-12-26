@@ -1,4 +1,5 @@
 const { CONFIG } = require('./config');
+const { secureCompare } = require('./security');
 
 function authMiddleware(req, res, next) {
   if (!CONFIG.API_KEY) {
@@ -21,7 +22,7 @@ function authMiddleware(req, res, next) {
   }
 
   const token = parts[1];
-  if (token !== CONFIG.API_KEY) {
+  if (!secureCompare(token, CONFIG.API_KEY)) {
     return res.status(403).json({ error: 'Invalid API key' });
   }
 

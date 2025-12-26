@@ -4,9 +4,16 @@ const { closeBrowser } = require('./browser');
 const { cleanup: cleanupTokens } = require('./tokens');
 const { authMiddleware } = require('./auth');
 const { setupRoutes } = require('./routes');
+const { RateLimiter, rateLimitMiddleware, securityHeadersMiddleware } = require('./security');
 
 const app = express();
-app.use(express.json());
+
+app.use(securityHeadersMiddleware);
+app.use(express.json({ limit: '1mb' }));
+
+const limiter = new RateLimiter(60000, 100);
+app.use(rateLimitMiddleware(limiter));
+
 app.use(authMiddleware);
 
 setupRoutes(app);
