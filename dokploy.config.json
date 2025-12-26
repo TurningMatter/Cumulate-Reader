@@ -1,0 +1,8 @@
+{
+  "name": "cumulate-reader",
+  "port": 4041,
+  "healthCheck": {
+    "path": "/health",
+    "interval": 30
+  }
+}
